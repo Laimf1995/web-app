@@ -1,5 +1,19 @@
-# web-app
-MUI框架开发的web  app
+##项目名称
+ web-app
+基于MUI框架开发的web  app
+
+##示例
+下载apk文件里面的apk
+
+##原理说明
+https://www.jianshu.com/c/7f86fa988bc1
+
+##下载安装
+在Hbuilder中可以直接打开项目
+
+
+
+
 
 ##动图
 
