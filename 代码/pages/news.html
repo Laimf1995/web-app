@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<title>新闻中心</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+
+		<link rel="stylesheet" href="../css/mui.min.css">
+		<!--引入公用样式-->
+		<link rel="stylesheet" type="text/css" href="../css/public.css" />
+	</head>
+	<style>
+		html,
+		body {
+			width: 100%;
+			height: 100%;
+			box-sizing: border-box;
+			background-color: #F5F5F5;
+		}
+	</style>
+
+	<body>
+		<div class="newbox">
+			<div class="conlistbox bs-bb">
+				<div class="con-list bs-bb" id="conlist">
+					<!--jiekou-->
+					<div class="jkmsg mui-row">
+						<div class="mui-col-xs-2 jkimg">
+							<img src="../images/yyzs.png" alt="" />
+						</div>
+						<div class="mui-col-xs-8 jktext bs-bb">
+							<b class="jkborder"></b>
+							<span class="bdFontSize">我是您的语音助手，有什么可以帮助您吗？</span>
+						</div>
+						<div class="mui-col-xs-2"></div>
+					</div>
+					<!--fasong-->
+					<!--<div class="fsmsg mui-row">
+						<div class="mui-col-xs-2">
+
+						</div>
+						<div class="mui-col-xs-8 fstext bs-bb">
+							<b class="fsborder"></b>
+							<span class="bdFontSize">2211222112211</span>
+						</div>
+						<div class="mui-col-xs-2 ta-r jkimg">
+							<img src="../images/gj.png" alt="" />
+						</div>
+					</div>-->
+				</div>
+			</div>
+			<div class="newinputbox bs-bb new-p">
+				<div class="mui-row bs-bb">
+					<div class="mui-col-xs-9 bs-bb">
+						<input type="text" class="con-cent bdFontSize" id="con" />
+					</div>
+					<div class="mui-col-xs-3 bs-bb ta-r btn-boxfs">
+						
+						<button type="button" id="btn" class="btn-fs">发送</button>
+					</div>
+				</div>
+			</div>
+		</div>
+		<script src="../js/mui.min.js" type="text/javascript" charset="utf-8"></script>
+		<script src="../js/zepto.js" type="text/javascript" charset="utf-8"></script>
+		<script>
+			mui.init();
+			mui.plusReady(function() {
+				/*
+				 *发送请求获取值
+				 * 
+				 **/
+				document.getElementById('btn').addEventListener('tap', function(event) {
+					//获取用户输入
+					
+					var text = document.getElementById('con').value;
+					if(text == '') {
+						plus.nativeUI.toast("内容不能为空!");
+						return;
+					}
+					$('#btn').attr("disabled","disabled"); 
+					//网页面上挂数据
+					var html = ' <div class="fsmsg mui-row">';
+					html += '	<div class="mui-col-xs-2"></div>';
+					html += '		<div class="mui-col-xs-8 fstext bs-bb">';
+//					html += '			<b class="fsborder"></b>';
+					html += '			<span class="bdFontSize ta-r">';
+					html += text;
+					html += '			</span>';
+					html += '		</div>';
+					html += '		<div class="mui-col-xs-2 ta-r jkimg">';
+					html += '			<img src="../images/wzj.png" alt="" />';
+					html += '		</div>';
+					html += '</div>';
+					$('#conlist').append(html);
+					var url = "http://jisuznwd.market.alicloudapi.com/iqa/query?question=" + text;
+					mui.ajax(url, {
+						dataType: 'json', //服务器返回json格式数据
+						type: 'get', //HTTP请求类型
+						timeout: 10000, //超时时间设置为10秒；
+						headers: {
+							'Authorization': 'APPCODE c40827ef516c49a3882e20a1d89e3356',
+							'Content-Type': 'application/json'
+						},
+						success: function(data) {
+							$('#btn').removeAttr("disabled");
+							document.getElementById('con').value = "";
+							console.log(JSON.stringify(data));
+							if(data.status == '0') {
+								var res = '<div class="jkmsg mui-row">';
+								res += '				<div class="mui-col-xs-2 jkimg">';
+								res += '					<img src="../images/yyzs.png" alt="" />';
+								res += '				</div>';
+								res += '				<div class="mui-col-xs-8 jktext bs-bb">';
+								res += '					<b class="jkborder"></b>';
+								res += '					<span class="bdFontSize">';
+								res += data.result.content;
+								res += '					</span>';
+								res += '				</div>';
+								res += '				<div class="mui-col-xs-2"></div>';
+								res += '			</div>';
+								$('#conlist').append(res);
+							} else {
+								var res = '<div class="jkmsg mui-row">';
+								res += '				<div class="mui-col-xs-2 jkimg">';
+								res += '					<img src="../images/yyzs.png" alt="" />';
+								res += '				</div>';
+								res += '				<div class="mui-col-xs-8 jktext bs-bb">';
+								res += '					<b class="jkborder"></b>';
+								res += '					<span class="bdFontSize">';
+								res += '查询错误，请从新输入';
+								res += '					</span>';
+								res += '				</div>';
+								res += '				<div class="mui-col-xs-2"></div>';
+								res += '			</div>';
+								$('#conlist').append(res);
+							}
+
+						},
+						error: function(xhr, type, errorThrown) {
+							plus.nativeUI.toast("查询错误，请稍后再试！");
+							$('#btn').removeAttr("disabled");
+							document.getElementById('con').value = "";
+						}
+					});
+				})
+			})
+		</script>
+	</body>
+
+</html>
